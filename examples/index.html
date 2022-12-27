@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Socket Client | Ved Gupta</title>
+</head>
+
+<body>
+    <output id="messages"></output>
+    <script>
+        const messages = document.getElementById("messages");
+        const socket = new WebSocket("ws://localhost:1337");
+        socket.onopen = (event) => console.log("Web Socket is connected");
+        socket.onmessage = (msg) => console.log("I got the message", msg);
+        socket.onerror = (error) => console.log("Web Socket Wrror", error);
+        socket.onclose = (event) => console.log("Disconnected from WebSocket Server");
+    </script>
+</body>
+
+</html>
