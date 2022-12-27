@@ -1,0 +1,15 @@
+{
+  "name": "node-sockets",
+  "version": "1.0.0",
+  "description": "A \"scratch implementation\" of Node.js based web sockets connections refers to a custom implementation of web sockets using the Node.js runtime environment. Web sockets allow for real-time, bidirectional communication between a client (such as a web browser) and a server. They are often used for applications that require real-time updates, such as chat rooms or collaborative platforms.",
+  "main": "index.js",
+  "scripts": {
+    
+  },
+  "repository": "https://github.com/innovatorved/node-sockets.git",
+  "author": "Ved Gupta <vedgupta@protonmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node" : ">=18.0.0"
+  }
+}
