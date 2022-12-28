@@ -1,0 +1,9 @@
+**/.git
+**/.svn
+**/.hg
+**/node_modules
+.gitignore
+.env
+.env.example
+build
+.vscode
