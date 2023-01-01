@@ -5,3 +5,4 @@ A "scratch implementation" of Node.js based web sockets connections refers to a 
 ## Reference
 
 1. https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers
+2. https://docs.google.com/spreadsheets/d/1KcTFjBRlosK0eV7BM4W8MLBZZNSkue1JzqIe2f31Fuo
