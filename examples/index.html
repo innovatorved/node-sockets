@@ -24,7 +24,10 @@
         });
         socket.send(data);
       };
-      socket.onmessage = (msg) => console.log("I got the message", msg);
+      socket.onmessage = (msg) => {
+        console.log("I got the message", msg);
+        messages.innerHTML = `${msg.data}`;
+      };
       socket.onerror = (error) => console.log("Web Socket Wrror", error);
       socket.onclose = (event) =>
         console.log("Disconnected from WebSocket Server");
