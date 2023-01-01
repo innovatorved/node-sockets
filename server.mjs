@@ -11,7 +11,11 @@ import {
   SIXTY_FOUR_BIT_INTEGER_MARKER,
   FIRST_BIT,
   MASK_KEY_BYTE_LENGTH,
+  OPCODE_UTF_ENCODING_INDICATOR,
+  FIN_VALUE,
 } from "./helpers/constants.js";
+
+import { concatBuffer } from "./helpers/BufferFunc.js"
 
 const server = createServer((req, res) => {
   res.writeHead(200);
@@ -44,7 +48,7 @@ function onSocketReadable(socket) {
    *
    */
 
-  const [markerAndPayloadLength] = socket.read(1);
+  const [ markerAndPayloadLength ] = socket.read(1);
   const PayloadLengthIndicatorBits = markerAndPayloadLength - FIRST_BIT;
 
   let MessageLength = 0;
@@ -68,7 +72,55 @@ function onSocketReadable(socket) {
   }
 
   console.log(data);
+
+  const msg = JSON.stringify({
+    message: data,
+  })
+  sendMessage(msg, socket);
 }
+
+function sendMessage(msg, socket) {
+  const dataFrame = prepareMessage(msg);
+  socket.write(dataFrame);
+
+}
+
+function prepareMessage(message) {
+  const msgBuffer = Buffer.from(message);
+  const messageSize = msgBuffer.length;
+
+  let dataFrameBuffer;
+
+  // 0x80 = 128
+  /** # 1st byte
+   *  FIN	  "Indicates that this is the final fragment in a message.  The first
+            fragment MAY also be the final fragment."
+      RSV1	
+      RSV2	
+      RSV3	
+      OPCODE	Defines the interpretation of the payload data.  
+                    0x01: this frame includes utf-8 text data.
+                    0x08:   this frame terminates the connection.
+	
+   */
+  const firstByte = FIN_VALUE | OPCODE_UTF_ENCODING_INDICATOR; // Union operation set first and last bit of byte to 1
+
+  if (messageSize <= SEVEN_BIT_INTEGER_MARKER) {
+    const bytes = [ firstByte ]
+
+    // Add messagesize to the Buffer because  messageisless than 125bit
+    dataFrameBuffer = Buffer.from(bytes.concat(messageSize))
+  }
+  else {
+    throw newError('Message to Long ! please reduce the message size')
+  }
+
+  const totalLength = dataFrameBuffer.byteLength + messageSize;
+  const dataFrameResponse = concatBuffer([ dataFrameBuffer, msgBuffer ], totalLength);
+
+  return dataFrameResponse;
+}
+
 
 function prepareHandShakeHeaders(clientId) {
   const acceptKey = createSocketAcceptHeader(clientId);
@@ -92,7 +144,7 @@ function createSocketAcceptHeader(clientId) {
 }
 
 // Error Handling to Keep s=Server Always On
-["uncaughtException", "unhandledRejection"].forEach((event) => {
+[ "uncaughtException", "unhandledRejection" ].forEach((event) => {
   process.on(event, (err) => {
     console.error(`Error Occurs: ${event} , msg: ${err.stack || err}`);
   });
